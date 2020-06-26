@@ -27,7 +27,7 @@ pygame.display.set_caption('Combat Tester')
 
 #Image Loading
 icon = pygame.image.load(os.path.join(path, 'Assets\Icons\Base\Hammer_Icon.png'))
-background = pygame.image.load(os.path.join(path,'Assets\Cartoon_Forest_BG_01\Cartoon_Forest_BG_01.png'))
+background = pygame.image.load(os.path.join(path,'Assets\Backgrounds\Cartoon_Forest_BG_01\Cartoon_Forest_BG_01.png'))
 
 #Sound Loading
 
