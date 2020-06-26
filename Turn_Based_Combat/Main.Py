@@ -12,23 +12,34 @@ try:
 except:
     print ('Failed To Initilize')
 
-#Pygame Variable Setting
+if pygame.get_init():
+    print ('*DEBUG* - Pygame Successfully Initilized')
+else:
+    raise Exception('*ERROR* - Pygame Failed To Initilize')
 
+
+#Pygame Variable Settings
+path = 'E:\Desktop\Game Development\Turn_Based_Combat\\'
 game_display = pygame.display.set_mode((O.Screen_Width,O.Screen_Height))
 clock = pygame.time.Clock()
 pygame.display.set_caption('Combat Tester')
-path = 'E:\Desktop\Game Development\Turn_Based_Combat\\'
+
 
 #Image Loading
-
-background = pygame.image.load(os.path.join(path,'PNG\Cartoon_Forest_BG_01\Cartoon_Forest_BG_01.png'))
+icon = pygame.image.load(os.path.join(path, 'Assets\Icons\Base\Hammer_Icon.png'))
+background = pygame.image.load(os.path.join(path,'Assets\Cartoon_Forest_BG_01\Cartoon_Forest_BG_01.png'))
 
 #Sound Loading
 
 
-#Unit Classes
+#More Pygame Variables
 
+pygame.display.set_icon(icon)
+
+#Unit Classes
+#region
 class Warrior():
+    """Basic Warrior Class"""
     def __init__(self, x, y, height, width, health):
         self.x = x
         self.y = y
@@ -46,6 +57,7 @@ class Warrior():
         pass
 
 class Mage():
+    """Basic Mage Class"""
     def __init__(self, x, y, height, width, health):
         self.x = x
         self.y = y
@@ -63,6 +75,7 @@ class Mage():
         pass
 
 class Archer():
+    """Basic Archer Class"""
     def __init__(self, x, y, height, width, health):
         self.x = x
         self.y = y
@@ -78,6 +91,43 @@ class Archer():
         pass
     def take_heal(self):
         pass
+
+class Ogre():
+    """Basic Ogre Class"""
+    def __init__(self, x, y, height, width, health):
+        self.x = x
+        self.y = y
+        self.height = height
+        self.width = width
+        self.health = health
+        self.hitbox = pygame.rect(self.x,self.y,self.width,self.height)
+    def update(self):
+        pass
+    def move(self):
+        pass
+    def take_damage(self):
+        pass
+    def take_heal(self):
+        pass
+
+class Goblin():
+    """Basic Goblin Class"""
+    def __init__(self, x, y, height, width, health):
+        self.x = x
+        self.y = y
+        self.height = height
+        self.width = width
+        self.health = health
+        self.hitbox = pygame.rect(self.x,self.y,self.width,self.height)
+    def update(self):
+        pass
+    def move(self):
+        pass
+    def take_damage(self):
+        pass
+    def take_heal(self):
+        pass
+#endregion
 #Random Defenitions
 
 
@@ -90,7 +140,7 @@ def screen_update():
 
 def main_menu():
     display = True
-    #Main Display Loop
+    #Main Menu Loop
     while display:
         #Makes it so when you hit X it closes the Program
         for event in pygame.event.get():
@@ -101,3 +151,13 @@ def main_menu():
 
 
 #Main Loop
+
+def loop():
+    loop = True
+    #Game Loop
+    while loop:
+        #Makes it so when you hit X it closes the Program
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
