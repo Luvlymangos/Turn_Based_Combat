@@ -70,98 +70,7 @@ Attributions = pygame.font.SysFont('Engravers MT', 25)
 
 pygame.display.set_icon(icon)
 
-#Unit Classes
-#region
-class Warrior():
-    """Basic Warrior Class"""
-    def __init__(self, x, y, height, width, health):
-        self.x = x
-        self.y = y
-        self.height = height
-        self.width = width
-        self.health = health
-        self.hitbox = pygame.rect(self.x,self.y,self.width,self.height)
-    def update(self):
-        pass
-    def move(self):
-        pass
-    def take_damage(self):
-        pass
-    def take_heal(self):
-        pass
 
-class Mage():
-    """Basic Mage Class"""
-    def __init__(self, x, y, height, width, health):
-        self.x = x
-        self.y = y
-        self.height = height
-        self.width = width
-        self.health = health
-        self.hitbox = pygame.rect(self.x,self.y,self.width,self.height)
-    def update(self):
-        pass
-    def move(self):
-        pass
-    def take_damage(self):
-        pass
-    def take_heal(self):
-        pass
-
-class Archer():
-    """Basic Archer Class"""
-    def __init__(self, x, y, height, width, health):
-        self.x = x
-        self.y = y
-        self.height = height
-        self.width = width
-        self.health = health
-        self.hitbox = pygame.rect(self.x,self.y,self.width,self.height)
-    def update(self):
-        pass
-    def move(self):
-        pass
-    def take_damage(self):
-        pass
-    def take_heal(self):
-        pass
-
-class Ogre():
-    """Basic Ogre Class"""
-    def __init__(self, x, y, height, width, health):
-        self.x = x
-        self.y = y
-        self.height = height
-        self.width = width
-        self.health = health
-        self.hitbox = pygame.rect(self.x,self.y,self.width,self.height)
-    def update(self):
-        pass
-    def move(self):
-        pass
-    def take_damage(self):
-        pass
-    def take_heal(self):
-        pass
-
-class Goblin():
-    """Basic Goblin Class"""
-    def __init__(self, x, y, height, width, health):
-        self.x = x
-        self.y = y
-        self.height = height
-        self.width = width
-        self.health = health
-        self.hitbox = pygame.rect(self.x,self.y,self.width,self.height)
-    def update(self):
-        pass
-    def move(self):
-        pass
-    def take_damage(self):
-        pass
-    def take_heal(self):
-        pass
-#endregion
 
 #Random Defenitions
 def blit_alpha(target, source, location, opacity):
@@ -302,23 +211,23 @@ def main_menu(First=True):
         #Parralax Effect
         #region
         if mos_pos[0] > O.Screen_Width//2:
-            blit_spot = (mos_pos[0]//Paralax_Amnt/2-240,-80)
+            blit_spot = (mos_pos[0]//Paralax_Amnt/2-240,-56)
             game_display.blit(menu_background[4],blit_spot)
         if mos_pos[0] == O.Screen_Width//2:
             blit_spot = (-160,-80)
             game_display.blit(menu_background[4],blit_spot)
         if mos_pos[0] < O.Screen_Width//2:
-            blit_spot = (mos_pos[0]//Paralax_Amnt/2-240,-80)
+            blit_spot = (mos_pos[0]//Paralax_Amnt/2-240,-56)
             game_display.blit(menu_background[4],blit_spot)
         
         if mos_pos[0] > O.Screen_Width//2:
-            blit_spot = (mos_pos[0]//Paralax_Amnt-240,-80)
+            blit_spot = (mos_pos[0]//Paralax_Amnt-240,-56)
             game_display.blit(menu_background[5],blit_spot)
         if mos_pos[0] == O.Screen_Width//2:
             blit_spot = (-160,-80)
             game_display.blit(menu_background[5],blit_spot)
         if mos_pos[0] < O.Screen_Width//2:
-            blit_spot = (mos_pos[0]//Paralax_Amnt-240,-80)
+            blit_spot = (mos_pos[0]//Paralax_Amnt-240,-56)
             game_display.blit(menu_background[5],blit_spot)
         #endregion
         
@@ -420,23 +329,23 @@ def Options_Menu():
         #Parralax Effect
         #region
         if mos_pos[0] > O.Screen_Width//2:
-            blit_spot = (mos_pos[0]//Paralax_Amnt/2-240,-80)
+            blit_spot = (mos_pos[0]//Paralax_Amnt/2-240,-56)
             game_display.blit(menu_background[4],blit_spot)
         if mos_pos[0] == O.Screen_Width//2:
             blit_spot = (-160,-80)
             game_display.blit(menu_background[4],blit_spot)
         if mos_pos[0] < O.Screen_Width//2:
-            blit_spot = (mos_pos[0]//Paralax_Amnt/2-240,-80)
+            blit_spot = (mos_pos[0]//Paralax_Amnt/2-240,-56)
             game_display.blit(menu_background[4],blit_spot)
         
         if mos_pos[0] > O.Screen_Width//2:
-            blit_spot = (mos_pos[0]//Paralax_Amnt-240,-80)
+            blit_spot = (mos_pos[0]//Paralax_Amnt-240,-56)
             game_display.blit(menu_background[5],blit_spot)
         if mos_pos[0] == O.Screen_Width//2:
             blit_spot = (-160,-80)
             game_display.blit(menu_background[5],blit_spot)
         if mos_pos[0] < O.Screen_Width//2:
-            blit_spot = (mos_pos[0]//Paralax_Amnt-240,-80)
+            blit_spot = (mos_pos[0]//Paralax_Amnt-240,-56)
             game_display.blit(menu_background[5],blit_spot)
         #endregion
         #TITLE TEXT
@@ -531,23 +440,23 @@ def Char_Screen():
         #Parralax Effect
         #region
         if mos_pos[0] > O.Screen_Width//2:
-            blit_spot = (mos_pos[0]//Paralax_Amnt/2-240,-80)
+            blit_spot = (mos_pos[0]//Paralax_Amnt/2-240,-56)
             game_display.blit(menu_background[4],blit_spot)
         if mos_pos[0] == O.Screen_Width//2:
             blit_spot = (-160,-80)
             game_display.blit(menu_background[4],blit_spot)
         if mos_pos[0] < O.Screen_Width//2:
-            blit_spot = (mos_pos[0]//Paralax_Amnt/2-240,-80)
+            blit_spot = (mos_pos[0]//Paralax_Amnt/2-240,-56)
             game_display.blit(menu_background[4],blit_spot)
         
         if mos_pos[0] > O.Screen_Width//2:
-            blit_spot = (mos_pos[0]//Paralax_Amnt-240,-80)
+            blit_spot = (mos_pos[0]//Paralax_Amnt-240,-56)
             game_display.blit(menu_background[5],blit_spot)
         if mos_pos[0] == O.Screen_Width//2:
             blit_spot = (-160,-80)
             game_display.blit(menu_background[5],blit_spot)
         if mos_pos[0] < O.Screen_Width//2:
-            blit_spot = (mos_pos[0]//Paralax_Amnt-240,-80)
+            blit_spot = (mos_pos[0]//Paralax_Amnt-240,-56)
             game_display.blit(menu_background[5],blit_spot)
         #endregion
         #BACK BUTTON
@@ -657,11 +566,17 @@ def Main_Loop(Warrior_Type, Warrior_Name):
     #Game Loop
     while Display:
         #Makes it so when you hit X it closes the Program
+        for x in range(0, O.Screen_Width, O.Tile_Size):
+            pygame.draw.line(game_display,[255,255,255],(x, 0),(x, O.Screen_Height))
+        for y in range(0, O.Screen_Height, O.Tile_Size):
+            pygame.draw.line(game_display,[255,255,255],(0, y),(O.Screen_Width, y))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
         print (Warrior_Type)
         print (Warrior_Name)
+        pygame.display.update()
+        clock.tick(O.Screen_Updates)
     
-Startup_Splash()
+Main_Loop(1, 'Jared')
