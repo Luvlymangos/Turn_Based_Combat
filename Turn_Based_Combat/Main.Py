@@ -20,10 +20,14 @@ else:
 
 
 #Pygame Variable Settings
+vec = pygame.math.Vector2
 path = 'E:\Desktop\Game Development\Turn_Based_Combat\\'
 game_display = pygame.display.set_mode((O.Screen_Width,O.Screen_Height))
 clock = pygame.time.Clock()
 pygame.display.set_caption('Combat Tester')
+all_sprites = pygame.sprite.Group()
+Collidables = pygame.sprite.Group()
+Decor = pygame.sprite.Group()
 
 
 #Image Loading
@@ -41,17 +45,27 @@ pygame.image.load(os.path.join(path, 'Assets\Backgrounds\game_background_1\layer
 buttons = pygame.image.load(os.path.join(path, 'Assets\Buttons\simple\\5.png'))
 Sound_icon = [pygame.image.load(os.path.join(path, 'Assets\Icons\Base\Sound_play.png')), 
 pygame.image.load(os.path.join(path, 'Assets\Icons\Base\Sound_Mute.png'))]
+road_15 = pygame.image.load(os.path.join(path, 'Assets\Tilemap\\road_15.png'))
 Warrior1_idle_Frames = []
 for i in W.Warrior_1_idle:
-    Warrior1_idle_Frames.append(pygame.transform.scale(i,(600,600)))
+    Warrior1_idle_Frames.append(pygame.transform.scale(i,(250,340)))
+Warrior1_Game_Idle_Frames = []
+for i in W.Warrior_1_idle:
+    Warrior1_Game_Idle_Frames.append(pygame.transform.scale(i,(128,177)))
 
 Warrior2_idle_Frames = []
 for i in W.Warrior_2_idle:
-    Warrior2_idle_Frames.append(pygame.transform.scale(i,(600,600)))
+    Warrior2_idle_Frames.append(pygame.transform.scale(i,(250,340)))
+Warrior2_Game_Idle_Frames = []
+for i in W.Warrior_2_idle:
+    Warrior2_Game_Idle_Frames.append(pygame.transform.scale(i,(128,177)))
 
 Warrior3_idle_Frames = []
 for i in W.Warrior_3_idle:
-    Warrior3_idle_Frames.append(pygame.transform.scale(i,(600,600)))
+    Warrior3_idle_Frames.append(pygame.transform.scale(i,(250,340)))
+Warrior3_Game_Idle_Frames = []
+for i in W.Warrior_3_idle:
+    Warrior3_Game_Idle_Frames.append(pygame.transform.scale(i,(128,177)))
 
 
 #Sound Loading
@@ -70,6 +84,18 @@ Attributions = pygame.font.SysFont('Engravers MT', 25)
 
 pygame.display.set_icon(icon)
 
+#Map Classes
+
+class Road(pygame.sprite.Sprite):
+    def __init__(self, x, y, num):
+        self.groups = all_sprites
+        pygame.sprite.Sprite.__init__(self, self.groups)
+        self.image = W.road[int(num)]
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.rect.x = x * O.Tile_Size
+        self.rect.y = y * O.Tile_Size
 
 
 #Random Defenitions
@@ -81,7 +107,103 @@ def blit_alpha(target, source, location, opacity):
         temp.blit(source, (0, 0))
         temp.set_alpha(opacity)        
         target.blit(temp, location)
+def load_data(self):
+        game_folder = path.dirname(__file__)
+        map = Map(path.join(game_folder, 'map2.txt'))
+
+
 #Primary Definitions
+class Player(pygame.sprite.Sprite):
+    def __init__(self, x, y, image, name):
+        self.groups = all_sprites
+        pygame.sprite.Sprite.__init__(self, self.groups)
+        if image == '1':
+            self.armor = 1
+            self.image = Warrior1_Game_Idle_Frames[0]
+        elif image == '2':
+            self.armor = 2
+            self.image = Warrior2_Game_Idle_Frames[0]
+        else:
+            self.armor = 3
+            self.image = Warrior3_Game_Idle_Frames[0]
+        self.vel = vec(0, 0)
+        self.pos = vec(x, y) * O.Tile_Size
+        self.speed = 1
+        self.rect = self.image.get_rect()
+
+    
+    def update(self):
+        self.pos += self.vel * clock.tick(O.Screen_Updates)
+        self.rect.x = self.pos.x
+        self.collide_with_walls('x')
+        self.rect.y = self.pos.y
+        self.collide_with_walls('y')
+
+    def animate(self,frame,direction):
+        self.direction = direction
+        if self.armor == 1:
+            self.image = Warrior1_Game_Idle_Frames[frame//2]
+        elif self.armor == 2:
+            self.image = Warrior1_Game_Idle_Frames[frame//2]
+        else:
+            self.image = Warrior1_Game_Idle_Frames[frame//2]
+    
+    def collide_with_walls(self, dir):
+        if dir == 'x':
+            hits = pygame.sprite.spritecollide(self, Collidables, False)
+            if hits:
+                if self.vel.x > 0:
+                    self.pos.x = hits[0].rect.left - self.rect.width
+                if self.vel.x < 0:
+                    self.pos.x = hits[0].rect.right
+                self.vel.x = 0
+                self.rect.x = self.pos.x
+        if dir == 'y':
+            hits = pygame.sprite.spritecollide(self, Collidables, False)
+            if hits:
+                if self.vel.y > 0:
+                    self.pos.y = hits[0].rect.top - self.rect.height
+                if self.vel.y < 0:
+                    self.pos.y = hits[0].rect.bottom
+                self.vel.y = 0
+                self.rect.y = self.pos.y
+
+
+
+class Map:
+    def __init__(self, filename, Dfilename):
+        self.data = []
+        self.ddata = []
+        with open(filename, 'rt') as f:
+            for line in f:
+                self.data.append(line.strip())
+        with open(Dfilename, 'rt') as d:
+            for line in d:
+                self.ddata.append(line.strip())
+        self.tilewidth = len(self.data[0])
+        self.tileheight = len(self.data)
+        self.width = self.tilewidth * O.Tile_Size
+        self.height = self.tileheight * O.Tile_Size
+
+class Camera:
+    def __init__(self, width, height):
+        self.camera = pygame.Rect(0, 0, width, height)
+        self.width = width
+        self.height = height
+
+    def apply(self, entity):
+        return entity.rect.move(self.camera.topleft)
+
+    def update(self, target):
+        x = -target.rect.x + int(O.Screen_Width / 2)
+        y = -target.rect.y + int(O.Screen_Height / 2)
+
+        # limit scrolling to map size
+        x = min(0, x)  # left
+        y = min(0, y)  # top
+        x = max(-(self.width - O.Screen_Width), x)  # right
+        y = max(-(self.height - O.Screen_Height), y)  # bottom
+        self.camera = pygame.Rect(x, y, self.width, self.height)       
 
 class InputBox:
 
@@ -139,9 +261,19 @@ class InputBox:
         return self.saved_text
         
 
-def screen_update():
-    pass
-
+def screen_update(camera, player):
+    Backfill = pygame.Rect(0,0, O.Screen_Width, O.Screen_Height)
+    pygame.draw.rect(game_display,[0,0,0], Backfill)
+    for sprite in all_sprites:
+        if sprite != player:
+            game_display.blit(sprite.image, camera.apply(sprite))
+    for sprite in all_sprites:
+        if sprite == player:
+            game_display.blit(sprite.image, camera.apply(sprite))
+    player.update()
+    camera.update(player)
+    pygame.display.update() #Make sure this is at the bottom of screen_update()
+    clock.tick(O.Screen_Updates)
 #Startup Splash
 
 def Startup_Splash():
@@ -486,11 +618,11 @@ def Char_Screen():
         game_display.blit(Right_button,(O.Screen_Width/2+200-55,O.Screen_Height/2-Right_button.get_height()/2))
         game_display.blit(Right,(O.Screen_Width/2+200+Right.get_width()/2-55,O.Screen_Height/2-Right.get_height()/2-5))
         if Warrior_Type == 1:
-            game_display.blit(Warrior1_idle_Frames[Frame//2],(O.Screen_Width/2-Warrior1_idle_Frames[0].get_width()/2,200))
+            game_display.blit(Warrior1_idle_Frames[Frame//2],(O.Screen_Width/2-Warrior1_idle_Frames[0].get_width()/2,300))
         if Warrior_Type == 2:
-            game_display.blit(Warrior2_idle_Frames[Frame//2],(O.Screen_Width/2-Warrior2_idle_Frames[0].get_width()/2,200))
+            game_display.blit(Warrior2_idle_Frames[Frame//2],(O.Screen_Width/2-Warrior2_idle_Frames[0].get_width()/2,300))
         if Warrior_Type == 3:
-            game_display.blit(Warrior3_idle_Frames[Frame//2],(O.Screen_Width/2-Warrior3_idle_Frames[0].get_width()/2,200))
+            game_display.blit(Warrior3_idle_Frames[Frame//2],(O.Screen_Width/2-Warrior3_idle_Frames[0].get_width()/2,300))
         if not Char_Name.has_text():
             Play_Text = Goth_Font.render('Play', True, [0,0,0])
             Play_button = pygame.transform.scale(buttons, (Play_Text.get_width()+20,Play_Text.get_height()+20))
@@ -534,7 +666,7 @@ def Char_Screen():
                     if Play_rect.collidepoint(mos_pos):
                         display = False
                         Characters_Name = Char_Name.saved_text
-                        Main_Loop(Warrior_Type, Characters_Name)
+                        Main_Loop(str(Warrior_Type), Characters_Name)
                 except:
                     pass
         
@@ -563,20 +695,64 @@ def Char_Screen():
 
 def Main_Loop(Warrior_Type, Warrior_Name):
     Display = True
+    Frame = 0
     #Game Loop
+    
+    map = Map('map.txt', 'decor.txt')
+    for row, tiles in enumerate(map.data):
+            for col, tile in enumerate(tiles):
+                if tile == '1':
+                    all_sprites.add(Road(col, row, tile))
+                if tile == '2':
+                    all_sprites.add(Road(col, row, tile))
+                if tile == '3':
+                    all_sprites.add(Road(col, row, tile))
+                if tile == '4':
+                    all_sprites.add(Road(col, row, tile))
+                if tile == '5':
+                    all_sprites.add(Road(col, row, tile))
+                if tile == '6':
+                    all_sprites.add(Road(col, row, tile))
+                if tile == 'P':
+                    player = Player(col, row, str(Warrior_Type), Warrior_Name)
+    for row, tiles in enumerate(map.ddata):
+            for col, tile in enumerate(tiles):
+                if tile == '1':
+                    pass
+                    #decor.add([DECOR](col, row))
+    camera = Camera(map.width, map.height)
     while Display:
+        for wall in all_sprites:
+            print (wall.rect)
+        if Frame > 58:
+            Frame = 0
         #Makes it so when you hit X it closes the Program
-        for x in range(0, O.Screen_Width, O.Tile_Size):
-            pygame.draw.line(game_display,[255,255,255],(x, 0),(x, O.Screen_Height))
-        for y in range(0, O.Screen_Height, O.Tile_Size):
-            pygame.draw.line(game_display,[255,255,255],(0, y),(O.Screen_Width, y))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-        print (Warrior_Type)
-        print (Warrior_Name)
-        pygame.display.update()
+        player.animate(Frame, 'Up')
+        screen_update(camera, player)
+        Frame += 1
         clock.tick(O.Screen_Updates)
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+            player.vel.x = -player.speed
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            player.vel.x = player.speed
+        if keys[pygame.K_UP] or keys[pygame.K_w]:
+            player.vel.y = -player.speed
+        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
+            player.vel.y = player.speed
+        if player.vel.x != 0 and player.vel.y != 0:
+            player.vel *= 0.7071
+
+
+
+
+
     
-Main_Loop(1, 'Jared')
+
+
+# create the game object
+Main_Loop('1', 'Jared')
