@@ -4,6 +4,7 @@ import time
 import Options as O
 import os
 import Warrior as W
+import Sprite_Dict as S
 
 #initilizations
 try:
@@ -86,11 +87,25 @@ pygame.display.set_icon(icon)
 
 #Map Classes
 
-class Road(pygame.sprite.Sprite):
-    def __init__(self, x, y, num):
-        self.groups = all_sprites
+class New_Sprite(pygame.sprite.Sprite):
+    def __init__(self, x, y, num, Collidable=False):
+        if Collidable == True:
+            self.groups = all_sprites, Collidables
+        else:
+            self.groups = all_sprites
         pygame.sprite.Sprite.__init__(self, self.groups)
-        self.image = W.road[int(num)]
+        self.image = W.Sprite_All[num]
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.rect.x = x * O.Tile_Size
+        self.rect.y = y * O.Tile_Size
+
+class New_Decor(pygame.sprite.Sprite):
+    def __init__(self, x, y, num):
+        self.groups = Decor, Collidables
+        pygame.sprite.Sprite.__init__(self, self.groups)
+        self.image = W.Building[int(num)]
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
@@ -270,6 +285,8 @@ def screen_update(camera, player):
     for sprite in all_sprites:
         if sprite == player:
             game_display.blit(sprite.image, camera.apply(sprite))
+    for sprite in Decor:
+        game_display.blit(sprite.image, camera.apply(sprite))
     player.update()
     camera.update(player)
     pygame.display.update() #Make sure this is at the bottom of screen_update()
@@ -701,25 +718,22 @@ def Main_Loop(Warrior_Type, Warrior_Name):
     map = Map('map.txt', 'decor.txt')
     for row, tiles in enumerate(map.data):
             for col, tile in enumerate(tiles):
-                if tile == '1':
-                    all_sprites.add(Road(col, row, tile))
-                if tile == '2':
-                    all_sprites.add(Road(col, row, tile))
-                if tile == '3':
-                    all_sprites.add(Road(col, row, tile))
-                if tile == '4':
-                    all_sprites.add(Road(col, row, tile))
-                if tile == '5':
-                    all_sprites.add(Road(col, row, tile))
-                if tile == '6':
-                    all_sprites.add(Road(col, row, tile))
+                if tile in S.Sprite_Dict:
+                    New_Sprite(col, row, Sprite_Dict[tile]['image'], Sprite_Dict[tile]['Collidable'])
                 if tile == 'P':
                     player = Player(col, row, str(Warrior_Type), Warrior_Name)
     for row, tiles in enumerate(map.ddata):
             for col, tile in enumerate(tiles):
                 if tile == '1':
-                    pass
-                    #decor.add([DECOR](col, row))
+                    Decor.add(Building(col, row, tile))
+                if tile == '2':
+                    Decor.add(Building(col, row, tile))
+                if tile == '3':
+                    Decor.add(Building(col, row, tile))
+                if tile == '4':
+                    Decor.add(Building(col, row, tile))
+                if tile == '5':
+                    Decor.add(Building(col, row, tile))
     camera = Camera(map.width, map.height)
     while Display:
         for wall in all_sprites:
