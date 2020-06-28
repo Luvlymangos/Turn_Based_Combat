@@ -111,7 +111,7 @@ pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\\road_22.
 pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\\road_23.png')),
 pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\\road_24.png')),
 pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\\road_25.png')),
-pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\\road_26.png')),
+pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\\road_26.png')), #13
 pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\land_1.png')),
 pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\land_2.png')),
 pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\land_3.png')),
@@ -137,5 +137,18 @@ pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\\building
 pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\\building_2.png')),
 pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\\building_3.png')),
 pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\\building_4.png')),
-pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\\building_5.png'))
+pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\\building_5.png')),
+pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\\tree_1.png')),
+pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\\tree_2.png')),
+pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\\tree_3.png')),
+pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\\tree_4.png')),
+pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\\tree_5.png')),
+pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\stones_1.png')),
+pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\stones_2.png')),
+pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\stones_3.png')),
+pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\stones_4.png')),
+pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\stones_5.png')),
+pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\lake.png'))
 ]
+
+Good_Morning = '''Good Morning Warrior, We have been expecting you...                '''

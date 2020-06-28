@@ -46,7 +46,7 @@ pygame.image.load(os.path.join(path, 'Assets\Backgrounds\game_background_1\layer
 buttons = pygame.image.load(os.path.join(path, 'Assets\Buttons\simple\\5.png'))
 Sound_icon = [pygame.image.load(os.path.join(path, 'Assets\Icons\Base\Sound_play.png')), 
 pygame.image.load(os.path.join(path, 'Assets\Icons\Base\Sound_Mute.png'))]
-road_15 = pygame.image.load(os.path.join(path, 'Assets\Tilemap\\road_15.png'))
+base_image = pygame.image.load(os.path.join(path, 'Assets\Tilemap\\bg.png'))
 Warrior1_idle_Frames = []
 for i in W.Warrior_1_idle:
     Warrior1_idle_Frames.append(pygame.transform.scale(i,(250,340)))
@@ -94,7 +94,7 @@ class New_Sprite(pygame.sprite.Sprite):
         else:
             self.groups = all_sprites
         pygame.sprite.Sprite.__init__(self, self.groups)
-        self.image = W.Sprite_All[num]
+        self.image = W.Sprite_All[int(num)]
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
@@ -102,8 +102,11 @@ class New_Sprite(pygame.sprite.Sprite):
         self.rect.y = y * O.Tile_Size
 
 class New_Decor(pygame.sprite.Sprite):
-    def __init__(self, x, y, num):
-        self.groups = Decor, Collidables
+    def __init__(self, x, y, num, Collidable=False):
+        if Collidable == True:
+            self.groups = Decor, Collidables
+        else:
+            self.groups = Decor
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.image = W.Building[int(num)]
         self.rect = self.image.get_rect()
@@ -122,6 +125,7 @@ def blit_alpha(target, source, location, opacity):
         temp.blit(source, (0, 0))
         temp.set_alpha(opacity)        
         target.blit(temp, location)
+
 def load_data(self):
         game_folder = path.dirname(__file__)
         map = Map(path.join(game_folder, 'map2.txt'))
@@ -143,7 +147,7 @@ class Player(pygame.sprite.Sprite):
             self.image = Warrior3_Game_Idle_Frames[0]
         self.vel = vec(0, 0)
         self.pos = vec(x, y) * O.Tile_Size
-        self.speed = 1
+        self.speed = 0.25
         self.rect = self.image.get_rect()
 
     
@@ -212,7 +216,8 @@ class Camera:
     def update(self, target):
         x = -target.rect.x + int(O.Screen_Width / 2)
         y = -target.rect.y + int(O.Screen_Height / 2)
-
+        self.x = x
+        self.y = y
         # limit scrolling to map size
         x = min(0, x)  # left
         y = min(0, y)  # top
@@ -279,6 +284,9 @@ class InputBox:
 def screen_update(camera, player):
     Backfill = pygame.Rect(0,0, O.Screen_Width, O.Screen_Height)
     pygame.draw.rect(game_display,[0,0,0], Backfill)
+    for i in range(0, O.Screen_Width, O.Tile_Size*4):
+        for x in range(0, O.Screen_Height, O.Tile_Size*4):
+            game_display.blit(base_image, (i,x))
     for sprite in all_sprites:
         if sprite != player:
             game_display.blit(sprite.image, camera.apply(sprite))
@@ -683,7 +691,7 @@ def Char_Screen():
                     if Play_rect.collidepoint(mos_pos):
                         display = False
                         Characters_Name = Char_Name.saved_text
-                        Main_Loop(str(Warrior_Type), Characters_Name)
+                        Game_Start_Screen(str(Warrior_Type), Characters_Name)
                 except:
                     pass
         
@@ -706,6 +714,39 @@ def Char_Screen():
         clock.tick(O.Screen_Updates)
 
 
+#Game_Start_Screen
+def Game_Start_Screen(Warrior, Name):
+    display = True
+    opacity = 0
+    pygame.mixer.music.fadeout(1000)
+    while display:
+        if opacity > 170:
+            opacity = 255
+            Game_Text_Start(Warrior, Name)
+        fade = pygame.Surface((O.Screen_Width, O.Screen_Height)).convert()
+        fade.set_alpha(opacity)
+        game_display.blit(fade,(0,0))
+        pygame.display.update()
+        clock.tick(O.Screen_Updates/2)
+        opacity += 1
+
+#Game Text Start
+
+def Game_Text_Start(warrior, Name):
+    display = True
+    Char = 0
+    while display:
+        if Char == len(W.Good_Morning):
+            Char = len(W.Good_Morning)
+            Main_Loop(warrior, Name)
+        else:
+            pass
+        text = Options_Lesser_Font.render(W.Good_Morning[:Char], True, (255,255,255))
+        game_display.blit(text, (50,100))
+        Char += 1
+        pygame.display.update()
+        clock.tick(O.Screen_Updates/8)
+
 
 
 #Main Loop
@@ -719,21 +760,13 @@ def Main_Loop(Warrior_Type, Warrior_Name):
     for row, tiles in enumerate(map.data):
             for col, tile in enumerate(tiles):
                 if tile in S.Sprite_Dict:
-                    New_Sprite(col, row, Sprite_Dict[tile]['image'], Sprite_Dict[tile]['Collidable'])
+                    New_Sprite(col, row, S.Sprite_Dict[tile]['name'], S.Sprite_Dict[tile]['Collidable'])
                 if tile == 'P':
                     player = Player(col, row, str(Warrior_Type), Warrior_Name)
     for row, tiles in enumerate(map.ddata):
             for col, tile in enumerate(tiles):
-                if tile == '1':
-                    Decor.add(Building(col, row, tile))
-                if tile == '2':
-                    Decor.add(Building(col, row, tile))
-                if tile == '3':
-                    Decor.add(Building(col, row, tile))
-                if tile == '4':
-                    Decor.add(Building(col, row, tile))
-                if tile == '5':
-                    Decor.add(Building(col, row, tile))
+                if tile in S.Decor_Dict:
+                    New_Decor(col, row, S.Decor_Dict[tile]['name'], S.Decor_Dict[tile]['Collidable'])
     camera = Camera(map.width, map.height)
     while Display:
         for wall in all_sprites:
@@ -769,4 +802,4 @@ def Main_Loop(Warrior_Type, Warrior_Name):
 
 
 # create the game object
-Main_Loop('1', 'Jared')
+Main_Loop('1','Luvly')
