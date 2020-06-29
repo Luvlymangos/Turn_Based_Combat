@@ -152,3 +152,64 @@ pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Tilemap\lake.png'
 ]
 
 Good_Morning = '''Good Morning Warrior, We have been expecting you...                '''
+Temp = None
+Warrior_1_right = []
+Warrior_1_left = []
+Warrior_1_up = []
+Warrior_1_down = []
+images = 30
+num = 0
+for i in range(images):
+    Temp = (pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Warrior\Animations\Right_Side\PNG Sequences\Warrior_clothes_1\Walk\\0_Warrior_Walk_%03d.png' % num)))
+    Warrior_1_right.append(pygame.transform.scale(Temp,(128,177)))
+    Temp = None
+    Temp = (pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Warrior\Animations\Left_Side\PNG Sequences\Warrior_clothes_1\Walk\\0_Warrior_Walk_%03d.png' % num)))
+    Warrior_1_left.append(pygame.transform.scale(Temp,(128,177)))
+    Temp = None
+    Temp = (pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Warrior\Animations\Back\PNG Sequences\Warrior_clothes_1\Walk\\0_Warrior_Walk_%03d.png' % num)))
+    Warrior_1_up.append(pygame.transform.scale(Temp,(128,177)))
+    Temp = None
+    Temp = (pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Warrior\Animations\Front\PNG Sequences\Warrior_clothes_1\Walk\\0_Warrior_Walk_%03d.png' % num)))
+    Warrior_1_down.append(pygame.transform.scale(Temp,(128,177)))
+    Temp = None
+    num += 1
+Warrior_2_right = []
+Warrior_2_left = []
+Warrior_2_up = []
+Warrior_2_down = []
+num = 0
+for i in range(images):
+    Temp = (pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Warrior\Animations\Right_Side\PNG Sequences\Warrior_clothes_2\Walk\\0_Warrior_Walk_%03d.png' % num)))
+    Warrior_2_right.append(pygame.transform.scale(Temp,(128,177)))
+    Temp = None
+    Temp = (pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Warrior\Animations\Left_Side\PNG Sequences\Warrior_clothes_2\Walk\\0_Warrior_Walk_%03d.png' % num)))
+    Warrior_2_left.append(pygame.transform.scale(Temp,(128,177)))
+    Temp = None
+    Temp = (pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Warrior\Animations\Back\PNG Sequences\Warrior_clothes_2\Walk\\0_Warrior_Walk_%03d.png' % num)))
+    Warrior_2_up.append(pygame.transform.scale(Temp,(128,177)))
+    Temp = None
+    Temp = (pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Warrior\Animations\Front\PNG Sequences\Warrior_clothes_2\Walk\\0_Warrior_Walk_%03d.png' % num)))
+    Warrior_2_down.append(pygame.transform.scale(Temp,(128,177)))
+    Temp = None
+    num += 1
+
+Warrior_3_right = []
+Warrior_3_left = []
+Warrior_3_up = []
+Warrior_3_down = []
+num = 0
+for i in range(images):
+    Temp = (pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Warrior\Animations\Right_Side\PNG Sequences\Warrior_clothes_empty\Walk\\0_Warrior_Walk_%03d.png' % num)))
+    Warrior_3_right.append(pygame.transform.scale(Temp,(128,177)))
+    Temp = None
+    Temp = (pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Warrior\Animations\Left_Side\PNG Sequences\Warrior_clothes_empty\Walk\\0_Warrior_Walk_%03d.png' % num)))
+    Warrior_3_left.append(pygame.transform.scale(Temp,(128,177)))
+    Temp = None
+    Temp = (pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Warrior\Animations\Back\PNG Sequences\Warrior_clothes_empty\Walk\\0_Warrior_Walk_%03d.png' % num)))
+    Warrior_3_up.append(pygame.transform.scale(Temp,(128,177)))
+    Temp = None
+    Temp = (pygame.image.load(os.path.join(path, 'Turn_Based_Combat\Assets\Warrior\Animations\Front\PNG Sequences\Warrior_clothes_empty\Walk\\0_Warrior_Walk_%03d.png' % num)))
+    Warrior_3_down.append(pygame.transform.scale(Temp,(128,177)))
+    Temp = None
+    num += 1
+

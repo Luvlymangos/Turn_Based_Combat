@@ -180,7 +180,8 @@ Building_5 = {
 }
 Tree_1 = {
 'name': '6',
-'Collidable': False
+'Collidable': False,
+'Event': True
 }
 Tree_2 = {
 'name': '7',

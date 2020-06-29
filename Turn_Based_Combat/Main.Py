@@ -11,6 +11,7 @@ try:
     pygame.init()
     pygame.mixer.init()
     pygame.font.init()
+    pygame.mixer.pre_init(44100, -16, 2, 512)
 except:
     print ('Failed To Initilize')
 
@@ -29,6 +30,10 @@ pygame.display.set_caption('Combat Tester')
 all_sprites = pygame.sprite.Group()
 Collidables = pygame.sprite.Group()
 Decor = pygame.sprite.Group()
+Event = pygame.sprite.Group()
+Base = []
+clouds = []
+Clouds_num = 0
 
 
 #Image Loading
@@ -47,6 +52,7 @@ buttons = pygame.image.load(os.path.join(path, 'Assets\Buttons\simple\\5.png'))
 Sound_icon = [pygame.image.load(os.path.join(path, 'Assets\Icons\Base\Sound_play.png')), 
 pygame.image.load(os.path.join(path, 'Assets\Icons\Base\Sound_Mute.png'))]
 base_image = pygame.image.load(os.path.join(path, 'Assets\Tilemap\\bg.png'))
+Bubble = pygame.image.load(os.path.join(path, 'Assets\Warrior\Text_Bubble\popup_1.png'))
 Warrior1_idle_Frames = []
 for i in W.Warrior_1_idle:
     Warrior1_idle_Frames.append(pygame.transform.scale(i,(250,340)))
@@ -67,6 +73,18 @@ for i in W.Warrior_3_idle:
 Warrior3_Game_Idle_Frames = []
 for i in W.Warrior_3_idle:
     Warrior3_Game_Idle_Frames.append(pygame.transform.scale(i,(128,177)))
+Warrior1_Right_Walk = W.Warrior_1_right
+Warrior1_Left_Walk = W.Warrior_1_left
+Warrior1_Down_Walk = W.Warrior_1_down
+Warrior1_Up_Walk = W.Warrior_1_up
+Warrior2_Right_Walk = W.Warrior_2_right 
+Warrior2_Left_Walk = W.Warrior_2_left
+Warrior2_Down_Walk = W.Warrior_2_down
+Warrior2_Up_Walk = W.Warrior_2_up
+Warrior3_Right_Walk = W.Warrior_3_right 
+Warrior3_Left_Walk = W.Warrior_3_left
+Warrior3_Down_Walk = W.Warrior_3_down
+Warrior3_Up_Walk = W.Warrior_3_up
 
 
 #Sound Loading
@@ -86,6 +104,15 @@ Attributions = pygame.font.SysFont('Engravers MT', 25)
 pygame.display.set_icon(icon)
 
 #Map Classes
+class Base_Sprite():
+    def __init__(self, x, y):
+        Base.append(self)
+        self.image = base_image
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.rect.x = x * O.Tile_Size
+        self.rect.y = y * O.Tile_Size
 
 class New_Sprite(pygame.sprite.Sprite):
     def __init__(self, x, y, num, Collidable=False):
@@ -102,8 +129,10 @@ class New_Sprite(pygame.sprite.Sprite):
         self.rect.y = y * O.Tile_Size
 
 class New_Decor(pygame.sprite.Sprite):
-    def __init__(self, x, y, num, Collidable=False):
-        if Collidable == True:
+    def __init__(self, x, y, num, Collidable=False, Event_add=False):
+        if Event_add == True:
+            self.groups = Decor, Event
+        elif Collidable == True:
             self.groups = Decor, Collidables
         else:
             self.groups = Decor
@@ -114,6 +143,8 @@ class New_Decor(pygame.sprite.Sprite):
         self.y = y
         self.rect.x = x * O.Tile_Size
         self.rect.y = y * O.Tile_Size
+    def event_run(self):
+        print ('ran event')
 
 
 #Random Defenitions
@@ -139,15 +170,15 @@ class Player(pygame.sprite.Sprite):
         if image == '1':
             self.armor = 1
             self.image = Warrior1_Game_Idle_Frames[0]
-        elif image == '2':
+        if image == '2':
             self.armor = 2
             self.image = Warrior2_Game_Idle_Frames[0]
-        else:
+        if image == '3':
             self.armor = 3
             self.image = Warrior3_Game_Idle_Frames[0]
         self.vel = vec(0, 0)
         self.pos = vec(x, y) * O.Tile_Size
-        self.speed = 0.25
+        self.speed = 0.20
         self.rect = self.image.get_rect()
 
     
@@ -157,15 +188,46 @@ class Player(pygame.sprite.Sprite):
         self.collide_with_walls('x')
         self.rect.y = self.pos.y
         self.collide_with_walls('y')
-
-    def animate(self,frame,direction):
-        self.direction = direction
-        if self.armor == 1:
-            self.image = Warrior1_Game_Idle_Frames[frame//2]
-        elif self.armor == 2:
-            self.image = Warrior1_Game_Idle_Frames[frame//2]
-        else:
-            self.image = Warrior1_Game_Idle_Frames[frame//2]
+        self.vel = vec(0,0)
+        self.collide_with_event('x')
+        self.collide_with_event('y')
+        
+    def animate(self,frame):
+        if self.vel.x == 0 and self.vel.y == 0:
+            if self.armor == 1:
+                self.image = Warrior1_Game_Idle_Frames[frame//1]
+            if self.armor == 2:
+                self.image = Warrior2_Game_Idle_Frames[frame//1]
+            if self.armor == 3:
+                self.image = Warrior3_Game_Idle_Frames[frame//1]
+        if self.vel.x > 0:
+            if self.armor == 1:    
+                self.image = Warrior1_Right_Walk[frame//1]
+            if self.armor == 2:
+                self.image = Warrior2_Right_Walk[frame//1]
+            if self.armor == 3:
+                self.image = Warrior3_Right_Walk[frame//1]
+        if self.vel.x < 0:
+            if self.armor == 1:
+                self.image = Warrior1_Left_Walk[frame//1]
+            if self.armor == 2:
+                self.image = Warrior2_Left_Walk[frame//1]
+            if self.armor == 3:
+                self.image = Warrior3_Left_Walk[frame//1]
+        if self.vel.y > 0:
+            if self.armor == 1:
+                self.image = Warrior1_Down_Walk[frame//1]
+            if self.armor == 2:
+                self.image = Warrior2_Down_Walk[frame//1]
+            if self.armor == 3:
+                self.image = Warrior3_Down_Walk[frame//1]
+        if self.vel.y < 0:
+            if self.armor == 1:
+                self.image = Warrior1_Up_Walk[frame//1]
+            if self.armor == 2:
+                self.image = Warrior2_Up_Walk[frame//1]
+            if self.armor == 3:
+                self.image = Warrior3_Up_Walk[frame//1]
     
     def collide_with_walls(self, dir):
         if dir == 'x':
@@ -186,6 +248,17 @@ class Player(pygame.sprite.Sprite):
                     self.pos.y = hits[0].rect.bottom
                 self.vel.y = 0
                 self.rect.y = self.pos.y
+    def collide_with_event(self,dir):
+        if dir == 'x':
+            hits = pygame.sprite.spritecollide(self, Event, True)
+            if hits:
+                for i in hits:
+                    i.event_run()
+        if dir == 'y':
+            hits = pygame.sprite.spritecollide(self, Event, True)
+            if hits:
+                for i in hits:
+                    i.event_run()
 
 
 
@@ -224,7 +297,15 @@ class Camera:
         x = max(-(self.width - O.Screen_Width), x)  # right
         y = max(-(self.height - O.Screen_Height), y)  # bottom
         self.camera = pygame.Rect(x, y, self.width, self.height)       
-
+class Clouds:
+    def __init__(self, x, y, image, current):
+        self.current = current
+        self.x = x
+        self.y = y
+        self.image = image
+    def update(self):
+        self.x += self.current
+        game_display.blit(self.image, (self.x, self.y))
 class InputBox:
 
     def __init__(self, x, y, w, h, text=''):
@@ -284,9 +365,8 @@ class InputBox:
 def screen_update(camera, player):
     Backfill = pygame.Rect(0,0, O.Screen_Width, O.Screen_Height)
     pygame.draw.rect(game_display,[0,0,0], Backfill)
-    for i in range(0, O.Screen_Width, O.Tile_Size*4):
-        for x in range(0, O.Screen_Height, O.Tile_Size*4):
-            game_display.blit(base_image, (i,x))
+    for sprite in Base:
+        game_display.blit(sprite.image, camera.apply(sprite))
     for sprite in all_sprites:
         if sprite != player:
             game_display.blit(sprite.image, camera.apply(sprite))
@@ -295,6 +375,8 @@ def screen_update(camera, player):
             game_display.blit(sprite.image, camera.apply(sprite))
     for sprite in Decor:
         game_display.blit(sprite.image, camera.apply(sprite))
+    for sprite in Event:
+        pygame.draw.rect(game_display, [0,0,0], sprite.rect, 3)
     player.update()
     camera.update(player)
     pygame.display.update() #Make sure this is at the bottom of screen_update()
@@ -340,6 +422,7 @@ def Startup_Splash():
 #Main Menu
 
 def main_menu(First=True):
+    global Clouds_num
     display = True
     mos_pos = (0,0) #Init The mouse position Variable
     Paralax_Amnt = 40 #Sets the background move amount for the Parallax effect
@@ -353,18 +436,27 @@ def main_menu(First=True):
     Options_Height = 790 #Options Button Height
     Play_Height = 500 #Play Button Height
     sound_cooldown = 5
+    Cloud_Off = 1.5
     Muted = O.Muted
     global buttons
     #Main Menu Loop
     while display:
+        game_display.blit(menu_background[6],(0,0))
+        game_display.blit(menu_background[0],(-320,0))
+        if Clouds_num % 1920 == 0:
+            clouds.append(Clouds(-1920, 0, menu_background[2], Cloud_Off/2))
+            clouds.append(Clouds(-1920, 0, menu_background[3], Cloud_Off/3))
+            clouds.append(Clouds(-1920, 0, menu_background[1], Cloud_Off))
+        
+        if len(clouds) > 6:
+            clouds.pop()
+        for i in clouds:
+            i.update()
+            if i.x > 1920:
+                clouds.remove(i)
         pygame.mixer.music.set_volume(O.Volume)
         mos_pos = pygame.mouse.get_pos() #Gets the mouse position
         #Background to Parralax
-        game_display.blit(menu_background[6],(0,0))
-        game_display.blit(menu_background[0],(0,0))
-        game_display.blit(menu_background[1],(0,0))
-        game_display.blit(menu_background[2],(0,0))
-        game_display.blit(menu_background[3],(0,0))
         #Parralax Effect
         #region
         if mos_pos[0] > O.Screen_Width//2:
@@ -463,6 +555,7 @@ def main_menu(First=True):
         clock.tick(O.Screen_Updates)
         Button_Alpha += Fade_in_amnt
         sound_cooldown -= 1
+        Clouds_num += Cloud_Off
 
 #Options Menu
 
@@ -473,16 +566,25 @@ def Options_Menu():
     Muted = O.Muted
     sound_cooldown = 5
     Volume_Grab = False
+    global Clouds_num
+    Cloud_Off = 1.5
     Back_Height = 900 #Back Button Height
     while display:
         pygame.mixer.music.set_volume(O.Volume)
         mos_pos = pygame.mouse.get_pos() #Gets the mouse position
         #Background to Parralax
         game_display.blit(menu_background[6],(0,0))
-        game_display.blit(menu_background[0],(0,0))
-        game_display.blit(menu_background[1],(0,0))
-        game_display.blit(menu_background[2],(0,0))
-        game_display.blit(menu_background[3],(0,0))
+        game_display.blit(menu_background[0],(-320,0))
+        if Clouds_num % 1920 == 0:
+            clouds.append(Clouds(-1920, 0, menu_background[2], Cloud_Off/2))
+            clouds.append(Clouds(-1920, 0, menu_background[3], Cloud_Off/3))
+            clouds.append(Clouds(-1920, 0, menu_background[1], Cloud_Off))
+        if len(clouds) > 6:
+            clouds.pop()
+        for i in clouds:
+            i.update()
+            if i.x > 1920:
+                clouds.remove(i)
         #Parralax Effect
         #region
         if mos_pos[0] > O.Screen_Width//2:
@@ -569,7 +671,7 @@ def Options_Menu():
         sound_cooldown -= 1
         pygame.display.update()
         clock.tick(O.Screen_Updates)
-
+        Clouds_num += 1.5
 
 #Character Selection Screen
 def Char_Screen():
@@ -578,6 +680,8 @@ def Char_Screen():
     Paralax_Amnt = 40 #Sets the background move amount for the Parallax effect
     Muted = O.Muted
     Frame = 0
+    global Clouds_num
+    Cloud_Off = 1.5
     sound_cooldown = 5
     Back_Height = 900 #Back Button Height
     play_Height = 800
@@ -590,10 +694,17 @@ def Char_Screen():
         mos_pos = pygame.mouse.get_pos() #Gets the mouse position
         #Background to Parralax
         game_display.blit(menu_background[6],(0,0))
-        game_display.blit(menu_background[0],(0,0))
-        game_display.blit(menu_background[1],(0,0))
-        game_display.blit(menu_background[2],(0,0))
-        game_display.blit(menu_background[3],(0,0))
+        game_display.blit(menu_background[0],(-320,0))
+        if Clouds_num % 1920 == 0:
+            clouds.append(Clouds(-1920, 0, menu_background[2], Cloud_Off/2))
+            clouds.append(Clouds(-1920, 0, menu_background[3], Cloud_Off/3))
+            clouds.append(Clouds(-1920, 0, menu_background[1], Cloud_Off))
+        if len(clouds) > 6:
+            clouds.pop()
+        for i in clouds:
+            i.update()
+            if i.x > 1920:
+                clouds.remove(i)
         #Parralax Effect
         #region
         if mos_pos[0] > O.Screen_Width//2:
@@ -712,7 +823,7 @@ def Char_Screen():
         Frame += 1
         pygame.display.update()
         clock.tick(O.Screen_Updates)
-
+        Clouds_num += 1.5
 
 #Game_Start_Screen
 def Game_Start_Screen(Warrior, Name):
@@ -722,7 +833,7 @@ def Game_Start_Screen(Warrior, Name):
     while display:
         if opacity > 170:
             opacity = 255
-            Game_Text_Start(Warrior, Name)
+            Game_Text_Start(str(Warrior), Name)
         fade = pygame.Surface((O.Screen_Width, O.Screen_Height)).convert()
         fade.set_alpha(opacity)
         game_display.blit(fade,(0,0))
@@ -738,7 +849,7 @@ def Game_Text_Start(warrior, Name):
     while display:
         if Char == len(W.Good_Morning):
             Char = len(W.Good_Morning)
-            Main_Loop(warrior, Name)
+            Main_Loop(str(warrior), Name)
         else:
             pass
         text = Options_Lesser_Font.render(W.Good_Morning[:Char], True, (255,255,255))
@@ -746,6 +857,47 @@ def Game_Text_Start(warrior, Name):
         Char += 1
         pygame.display.update()
         clock.tick(O.Screen_Updates/8)
+
+#pause Menu
+
+def pause_menu():
+    display = True
+    Back_Height = 900
+    Main_Height = 800
+    while display:
+        mos_pos = pygame.mouse.get_pos()
+        #Paused Text
+        Text_Title = Title_Text.render('Paused', True, [0,0,0])
+        game_display.blit(Text_Title,(O.Screen_Width/2-Text_Title.get_width()/2, O.Screen_Height/6))
+        #Back Button
+        Back_Text = Goth_Font.render('Back', True, [0,0,0])
+        back_button = pygame.transform.scale(buttons, (Back_Text.get_width()+20,Back_Text.get_height()+20))
+        game_display.blit(back_button,(O.Screen_Width/2-back_button.get_size()[0]/2,Back_Height))
+        back_rect = pygame.Rect(O.Screen_Width/2-back_button.get_size()[0]/2,Back_Height,back_button.get_width(),back_button.get_height())
+        game_display.blit(Back_Text,(O.Screen_Width/2-Back_Text.get_width()/2+2,Back_Height+7))
+        #Return To Main Menu
+        Main_Text = Goth_Font.render('Main Menu', True, [0,0,0])
+        Main_button = pygame.transform.scale(buttons, (Main_Text.get_width()+20,Main_Text.get_height()+20))
+        game_display.blit(Main_button,(O.Screen_Width/2-Main_button.get_size()[0]/2,Main_Height))
+        main_rect = pygame.Rect(O.Screen_Width/2-Main_button.get_size()[0]/2,Main_Height,Main_button.get_width(),Main_button.get_height())
+        game_display.blit(Main_Text,(O.Screen_Width/2-Main_Text.get_width()/2+2,Main_Height+7))
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if back_rect.collidepoint(mos_pos):
+                    display = False
+                if main_rect.collidepoint(mos_pos):
+                    display = False
+                    all_sprites.empty()
+                    Collidables.empty()
+                    Decor.empty()
+                    Base.clear()
+                    main_menu(False)
+
 
 
 
@@ -755,30 +907,34 @@ def Main_Loop(Warrior_Type, Warrior_Name):
     Display = True
     Frame = 0
     #Game Loop
-    
     map = Map('map.txt', 'decor.txt')
+    for row, tiles in enumerate(map.data):
+            for col, tile in enumerate(tiles):
+                Base_Sprite(col*4, row*4)
     for row, tiles in enumerate(map.data):
             for col, tile in enumerate(tiles):
                 if tile in S.Sprite_Dict:
                     New_Sprite(col, row, S.Sprite_Dict[tile]['name'], S.Sprite_Dict[tile]['Collidable'])
                 if tile == 'P':
-                    player = Player(col, row, str(Warrior_Type), Warrior_Name)
+                    player = Player(col, row, Warrior_Type, Warrior_Name)
     for row, tiles in enumerate(map.ddata):
             for col, tile in enumerate(tiles):
                 if tile in S.Decor_Dict:
+                    if 'Event' in S.Decor_Dict[tile]:
+                        New_Decor(col, row, S.Decor_Dict[tile]['name'], S.Decor_Dict[tile]['Collidable'], S.Decor_Dict[tile]['Event'])
                     New_Decor(col, row, S.Decor_Dict[tile]['name'], S.Decor_Dict[tile]['Collidable'])
     camera = Camera(map.width, map.height)
     while Display:
-        for wall in all_sprites:
-            print (wall.rect)
-        if Frame > 58:
+        #for i in Event:
+            #print (i.rect)
+        if Frame > 29:
             Frame = 0
         #Makes it so when you hit X it closes the Program
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-        player.animate(Frame, 'Up')
+        player.animate(Frame)
         screen_update(camera, player)
         Frame += 1
         clock.tick(O.Screen_Updates)
@@ -793,6 +949,8 @@ def Main_Loop(Warrior_Type, Warrior_Name):
             player.vel.y = player.speed
         if player.vel.x != 0 and player.vel.y != 0:
             player.vel *= 0.7071
+        if keys[pygame.K_ESCAPE]:
+            pause_menu()
 
 
 
@@ -802,4 +960,4 @@ def Main_Loop(Warrior_Type, Warrior_Name):
 
 
 # create the game object
-Main_Loop('1','Luvly')
+Main_Loop('2','Luvly')
