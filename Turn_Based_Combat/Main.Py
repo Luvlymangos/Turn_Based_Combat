@@ -33,6 +33,7 @@ Decor = pygame.sprite.Group()
 Event = pygame.sprite.Group()
 Base = []
 clouds = []
+inventory = []
 Clouds_num = 0
 
 
@@ -53,6 +54,7 @@ Sound_icon = [pygame.image.load(os.path.join(path, 'Assets\Icons\Base\Sound_play
 pygame.image.load(os.path.join(path, 'Assets\Icons\Base\Sound_Mute.png'))]
 base_image = pygame.image.load(os.path.join(path, 'Assets\Tilemap\\bg.png'))
 Bubble = pygame.image.load(os.path.join(path, 'Assets\Warrior\Text_Bubble\popup_1.png'))
+Sword_Image = pygame.image.load(os.path.join(path, 'Assets\Icons\Base\Gold_Coins.png'))
 Warrior1_idle_Frames = []
 for i in W.Warrior_1_idle:
     Warrior1_idle_Frames.append(pygame.transform.scale(i,(250,340)))
@@ -141,11 +143,18 @@ class New_Decor(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
+        self.pos = vec(x, y) * O.Tile_Size
         self.rect.x = x * O.Tile_Size
         self.rect.y = y * O.Tile_Size
     def event_run(self):
-        print ('ran event')
-
+        inventory.append(Sword(5,Sword_Image))
+        inventory.append(Sword(5,Sword_Image))
+#Item Definitions
+class Sword():
+    def __init__(self, Damage, Image):
+        self.Damage = Damage
+        self.Image = Image
+        self.Icon = pygame.transform.scale(self.Image,(64,64))
 
 #Random Defenitions
 def blit_alpha(target, source, location, opacity):
@@ -361,6 +370,49 @@ class InputBox:
     def get_text(self):
         return self.saved_text
         
+def inventory_open():
+    display = True
+    Back_Height = 900
+    print('Opening Inventory')
+    Inv_Text = Options_Lesser_Font.render('Inventory', True, (255,255,255))
+    Bag_Rect = pygame.Surface((450,500))
+    Bag_Rect.set_alpha(64)
+    Bag_Out_rect = pygame.Rect(1130,450,450,500)
+    Bag_Rect.fill((0,0,0))
+    game_display.blit(Bag_Rect,(1130,450))
+    pygame.draw.rect(game_display,(0,0,0),Bag_Out_rect, 1)
+    game_display.blit(Inv_Text,(1135,460))
+    while display:
+        #Back Button
+        mos_pos = pygame.mouse.get_pos()
+        Back_Text = Goth_Font.render('Back', True, [0,0,0])
+        back_button = pygame.transform.scale(buttons, (Back_Text.get_width()+20,Back_Text.get_height()+20))
+        game_display.blit(back_button,(O.Screen_Width/2-back_button.get_size()[0]/2,Back_Height))
+        back_rect = pygame.Rect(O.Screen_Width/2-back_button.get_size()[0]/2,Back_Height,back_button.get_width(),back_button.get_height())
+        game_display.blit(Back_Text,(O.Screen_Width/2-Back_Text.get_width()/2+2,Back_Height+7))
+        x = 1150 
+        y = 500
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if back_rect.collidepoint(mos_pos):
+                    display = False
+        for l in inventory:
+            print (len(inventory))
+            box = pygame.Rect(x,y, 64, 64)
+            if x == 1450:
+                x = 1200
+                y += 80
+            if y >= 980:
+                pass
+            else:
+                pygame.draw.rect(game_display, [0,0,0], box, 1)
+                game_display.blit(l.Icon,(x+box[2]-l.Icon.get_width(),y+box[3]-l.Icon.get_height()))
+
+                x += 80
+        pygame.display.update()
 
 def screen_update(camera, player):
     Backfill = pygame.Rect(0,0, O.Screen_Width, O.Screen_Height)
@@ -896,7 +948,7 @@ def pause_menu():
                     Collidables.empty()
                     Decor.empty()
                     Base.clear()
-                    main_menu(False)
+                    main_menu(False) 
 
 
 
@@ -925,8 +977,6 @@ def Main_Loop(Warrior_Type, Warrior_Name):
                     New_Decor(col, row, S.Decor_Dict[tile]['name'], S.Decor_Dict[tile]['Collidable'])
     camera = Camera(map.width, map.height)
     while Display:
-        #for i in Event:
-            #print (i.rect)
         if Frame > 29:
             Frame = 0
         #Makes it so when you hit X it closes the Program
@@ -951,6 +1001,10 @@ def Main_Loop(Warrior_Type, Warrior_Name):
             player.vel *= 0.7071
         if keys[pygame.K_ESCAPE]:
             pause_menu()
+        if keys[pygame.K_i]:
+            inventory_open()
+        if keys[pygame.K_p]:
+            inventory.append(Sword(5, doa))
 
 
 
