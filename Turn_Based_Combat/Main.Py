@@ -5,7 +5,7 @@ import Options as O
 import os
 import Warrior as W
 import Sprite_Dict as S
-
+import Event_List as E
 #initilizations
 try:
     pygame.init()
@@ -19,6 +19,7 @@ if pygame.get_init():
     print ('*DEBUG* - Pygame Successfully Initilized')
 else:
     raise Exception('*ERROR* - Pygame Failed To Initilize')
+
 
 
 #Pygame Variable Settings
@@ -1014,4 +1015,4 @@ def Main_Loop(Warrior_Type, Warrior_Name):
 
 
 # create the game object
-Main_Loop('2','Luvly')
+main_menu(True)
